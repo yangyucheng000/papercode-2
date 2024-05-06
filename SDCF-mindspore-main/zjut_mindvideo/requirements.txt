@@ -1,0 +1,10 @@
+numpy
+scipy
+decord
+pycocotools
+opencv-python
+pyyaml
+pillow
+sphinx
+sphinx-rtd-theme
+sphinx-markdown-tables

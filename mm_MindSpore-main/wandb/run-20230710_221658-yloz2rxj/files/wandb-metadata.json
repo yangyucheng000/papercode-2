@@ -1,0 +1,211 @@
+{
+    "os": "Linux-3.10.0-1062.el7.x86_64-x86_64-with-centos-7.7.1908-Core",
+    "python": "3.7.10",
+    "heartbeatAt": "2023-07-10T14:16:59.476247",
+    "startedAt": "2023-07-10T14:16:58.310032",
+    "docker": null,
+    "cuda": "10.2.89",
+    "args": [],
+    "state": "running",
+    "program": "main.py",
+    "codePath": "main.py",
+    "host": "host12",
+    "username": "LiJingZhi",
+    "executable": "/home/LiJingZhi/.conda/envs/codenv/bin/python",
+    "cpu_count": 16,
+    "cpu_count_logical": 32,
+    "cpu_freq": {
+        "current": 813.3425000000003,
+        "min": 800.0,
+        "max": 3200.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 799.932,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 799.932,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 799.932,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 800.061,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 833.001,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 821.337,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 800.061,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 826.977,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 800.189,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 800.061,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 800.061,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 800.061,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 799.932,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 999.884,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 800.061,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 801.342,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 799.932,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 800.317,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 938.745,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 1095.245,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 842.871,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 802.239,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 800.317,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 831.079,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 856.329,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 799.932,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 800.189,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 799.932,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 800.061,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 799.932,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 800.061,
+            "min": 800.0,
+            "max": 3200.0
+        },
+        {
+            "current": 808.135,
+            "min": 800.0,
+            "max": 3200.0
+        }
+    ],
+    "disk": {
+        "total": 49.9755859375,
+        "used": 34.915096282958984
+    },
+    "gpu": "GeForce RTX 2080 Ti",
+    "gpu_count": 4,
+    "gpu_devices": [
+        {
+            "name": "GeForce RTX 2080 Ti",
+            "memory_total": 11554717696
+        },
+        {
+            "name": "GeForce RTX 2080 Ti",
+            "memory_total": 11554717696
+        },
+        {
+            "name": "GeForce RTX 2080 Ti",
+            "memory_total": 11554717696
+        },
+        {
+            "name": "GeForce RTX 2080 Ti",
+            "memory_total": 11554717696
+        }
+    ],
+    "memory": {
+        "total": 125.1943244934082
+    }
+}

@@ -1,0 +1,182 @@
+主干网络 bagtricks_DR50_mix.yml
+
+- [ ] BACKBONE build_meta_dynamic_router_resnet_backbone
+  - [X] 7.1 from fastreid.modeling.ops import MetaConv2d, MetaLinear, MetaBNNorm, MetaINNorm, MetaIBNNorm, MetaGate
+    - [X] 6.30 MetaConv2d
+    - [X] 7.1 MetaLinear
+    - [X] 7.1 MetaBNNorm
+    - [X] 7.1 MetaINNorm
+    - [X] 7.1 MetaIBNNorm
+    - [X] 7.1 MetaGate
+    - [X] 7.1 ops.py 附加 MetaParam
+  - [X] 7.1 from fastreid.layers import (IBN, SELayer, Non_local, get_norm,)
+    - [X] 7.1 IBN
+    - [X] 7.1 SELayer
+    - [X] 7.1 Non_local
+    - [X] 7.1 get_norm
+  - [X] 7.1 BasicBlock
+  - [X] 7.1 MetaSELayer
+  - [X] 7.1 Bottleneck
+  - [X] 7.1 Identity
+  - [X] 7.1 HyperRouter
+  - [ ] model = ResNet()
+    - [X] 6.16 class ResNet(nn.Module): 
+    - [X] 6.11 self.conv1 = MetaConv2d() class MetaConv2d(nn.Conv2d)
+      - [X] 6.11 torch.nn.functional.conv2d()
+    - [X] 6.11 self.bn1 = MetaBNNorm(64)
+    - [X] 6.11 self.relu = nn.ReLU(inplace=True)
+    - [X] 6.11 self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, ceil_mode=True)
+    - [X] 6.11 self.layer1 = self._make_layer(block, 64, layers[0]-1, 1, bn_norm, with_ibn, with_se)
+      - [X] 6.11 downsample = Sequential_ext(MetaConv2d(),MetaBNNorm(),)
+      - [X] 6.11 return nn.Sequential(*layers)
+    - [X] 6.29 self.adaptor1_sub = Bottleneck2()
+      - [X] 6.16 class Bottleneck2(nn.Module):
+      - [X] 6.11 self.conv1 = MetaConv2d()
+      - [X] 6.25 self.bn1 = MetaIBNNorm()
+        - [X] 6.18 class MetaIBNNorm(nn.Module):
+        - [X] 6.16 self.IN = MetaINNorm(half1, **kwargs)
+          - [X] 6.16 def forward(self, inputs, opt=-1):
+          - [X] 6.16 return F.instance_norm()
+        - [X] 6.11 self.BN = MetaBNNorm(half2, **kwargs)
+        - [X] 6.16 def forward(self, inputs, opt=-1):
+        - [X] 6.17 split = torch.split(inputs, self.half, 1)
+        - [X] 6.25 out1 = self.IN(split[0].contiguous(), opt)
+        - [X] 6.25 out2 = self.BN(split[1].contiguous(), opt)
+        - [X] 6.18 out = torch.cat((out1, out2), 1)
+      - [X] 6.11 self.bn1 = MetaBNNorm(planes)
+      - [X] 6.25 self.relu = nn.ReLU(inplace=True)
+      - [X] 6.29 self.se = SELayer(planes * self.expansion, reduction)
+        - [X] 6.29 class SELayer(nn.Module):
+        - [X] 6.29 self.avg_pool = nn.AdaptiveAvgPool2d(1)
+        - [X] 6.29 self.fc = nn.Sequential()
+        - [X] 6.29 def forward(self, x):
+      - [X] 6.25 self.se = nn.Identity()
+      - [X] 6.16 def forward(self, x, opt=-1):
+    - [X] 6.25 self.router1 = HyperRouter(256)
+      - [X] 6.18 class HyperRouter(nn.Module):
+      - [X] 6.18 self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+      - [X] 6.18 self.fc1 = MetaLinear(planes, planes//16)
+        - [X] 6.18 class MetaLinear(nn.Linear):
+        - [X] 6.18 def forward(self, inputs, opt = -1, reserve = False):
+        - [X] 6.18 return F.linear(inputs, updated_weight, updated_bias)
+        - [X] 6.18 return F.linear(inputs, self.weight, self.bias)
+      - [X] 6.19 self.relu = nn.ReLU()
+      - [X] 6.25 self.softmax = nn.Softmax(-1)
+      - [X] 6.25 def forward(self, x, opt=-1):
+      - [X] 6.25 x = self.avgpool(x).squeeze(-1).squeeze(-1)
+      - [X] 6.25 weight = self.relu(F.normalize(self.fc1(x, opt), 2, -1))
+      - [X] 6.25 x = self.softmax(torch.einsum('bi,bil->bl', x, weight))
+    - [X] 6.25 self.meta_fuse1 = MetaGate(256)
+      - [X] 6.25 class MetaGate(nn.Module):
+      - [X] 6.25 self.gate = nn.Parameter(torch.randn(feat_dim) * 0.1)
+      - [X] 6.25 def forward(self, inputs1, inputs2, opt=-1):
+    - [X] 6.25 self.meta_se1 = MetaSELayer(256)
+      - [X] 6.25 class MetaSELayer(nn.Module):
+    - [X] 6.18 self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+    - [X] 6.25 self.softmax = nn.Softmax(1)
+    - [X] 6.25 self.sigmoid = nn.Sigmoid()
+    - [X] 6.25 self.relu = nn.ReLU()
+    - [X] 6.25 self.random_init()
+      - [X] 6.25 nn.init.normal_(m.weight, 0, math.sqrt(2. / n))
+      - [X] 6.25 nn.init.constant_(m.weight, 1)
+      - [X] 6.25 nn.init.constant_(m.bias, 0)
+    - [X] 6.30 if with_nl: self._build_nonlocal(layers, non_layers, bn_norm)
+      - [X] 6.30 self.NL_1 = nn.ModuleList()
+    - [X] 7.1 def get_all_conv_layers(self, module):
+    - [X] 6.25 def forward(self, x, epoch, opt=-1):
+      - [X] 6.25 out_features.append(F.normalize(temp, 2, 1)[..., 0, 0])
+      - [X] 6.25 weights = torch.cat(weights, -1)
+  - [ ] state_dict = torch.load(pretrain_path, map_location=torch.device('cpu'))
+  - [ ] state_dict = init_pretrained_weights(key)
+  - [ ] 预训练模型的权重加载到当前模型
+    - [ ] model_dict = model.state_dict()
+    - [X] 6.30 model_dict[k] = F.avg_pool1d().reshape(Cout, H, W, -1).permute(0, 3, 1, 2).repeat(K, 1, 1, 1)
+  - [ ] incompatible = model.load_state_dict(model_dict, strict=False)
+- [ ] HEADS MetaEmbeddingHead
+
+train_net.py main()
+
+评估部分
+
+- [ ] model = DefaultTrainer.build_model()
+- [ ] Checkpointer().load()
+- [ ] res = DefaultTrainer.test()
+
+训练部分
+
+- [ ] trainer = DefaultTrainer() -> fastreid.engine.defaults.DefaultTrainer
+  - [ ] data_loader, single_data_loader = self.build_train_loader()
+    - [ ] return build_reid_train_loader()
+      - [ ] comm.get_world_size() ❌ mindspore 没有提供类似 torch.distributed.is_initialized() 的函数
+      - [X] batch_sampler = torch.utils.data.sampler.BatchSampler() ✅ 2023-5-19
+      - [ ] train_loader = DataLoaderX()
+        - [ ] self.stream = torch.cuda.Stream(local_rank) ❌ 找不到可以转换的函数，用于创建一个 CUDA 流（stream）对象，这个对象可以在 GPU 上执行异步计算任务，从而提高训练效率。**local_rank** 表示当前进程在分布式训练中的本地排名（local rank），它用于在分布式训练中确定每个进程的角色和任务。通过将 **local_rank** 作为参数传递给 **torch.cuda.Stream()** 函数，可以创建一个与当前进程相关的 CUDA 流对象，用于在当前进程中执行异步计算任务。
+        - [ ] self.iter = BackgroundGenerator(self.iter, self.local_rank)
+          - [ ] torch.cuda.set_device(self.local_rank) ❌ 在 MindSpore 中，我们通过 context 中 的 device_target 参数 指定模型绑定的设备，device_id 指定设备的序号。与 PyTorch 不同的是，一旦设备设置成功，输入数据和模型会默认拷贝到指定的设备中执行，不需要也无法再改变数据和模型所运行的设备类型。https://www.mindspore.cn/docs/zh-CN/r2.0/migration_guide/typical_api_comparision.html?highlight=device
+        - [ ] self.preload()
+          - [ ] with torch.cuda.stream(self.stream): ❌ 找不到可以转换的函数，用于创建一个 CUDA 流（stream）对象，这个对象可以在 GPU 上执行异步计算任务，从而提高训练效率。**local_rank** 表示当前进程在分布式训练中的本地排名（local rank），它用于在分布式训练中确定每个进程的角色和任务。通过将 **local_rank** 作为参数传递给 **torch.cuda.Stream()** 函数，可以创建一个与当前进程相关的 CUDA 流对象，用于在当前进程中执行异步计算任务。
+          - [X] if isinstance(self.batch[k], torch.Tensor): ✅ 2023-5-21
+          - [ ] self.batch[k] =self.batch[k].to(device=self.local_rank, non_blocking=True) ❌ 在 MindSpore 中，我们通过 context 中 的 device_target 参数 指定模型绑定的设备，device_id 指定设备的序号。与 PyTorch 不同的是，一旦设备设置成功，输入数据和模型会默认拷贝到指定的设备中执行，不需要也无法再改变数据和模型所运行的设备类型。https://www.mindspore.cn/docs/zh-CN/r2.0/migration_guide/typical_api_comparision.html?highlight=device
+        - [ ] torch.cuda.current_stream().wait_stream(self.stream) ❌ 找不到可以转换的函数
+      - [ ] comm.get_local_rank() ❌ mindspore 没有提供类似 torch.distributed.is_initialized() 的函数
+  - [ ] cfg = self.auto_scale_hyperparams()
+    - [ ] comm.is_main_process()
+      - [ ] return get_rank()
+  - [ ] model = self.build_model()
+    - [ ] model = build_model()
+      - [ ] model = META_ARCH_REGISTRY.get()
+      - [ ] model.to(torch.device())
+  - [ ] optimizer, param_wrapper = self.build_optimizer()
+    - [ ] return build_optimizer()
+      - [ ] params = get_default_optimizer_params()
+      - [ ] params = ContiguousParams()
+      - [ ] return maybe_add_freeze_layer()
+      - [ ] maybe_add_gradient_clipping()
+  - [ ] model = torch.nn.DataParallel()
+  - [ ] self.scheduler = self.build_lr_scheduler()
+    - [ ] return build_lr_scheduler()
+      - [ ] lr_scheduler.WarmupLR()
+  - [ ] self._trainer = (AMPTrainer if cfg.SOLVER.AMP.ENABLED else SimpleTrainer)()
+    - [ ] AMPTrainer
+      - [ ] super().__init__()
+      - [ ] from torch.cuda.amp import GradScaler
+      - [ ] grad_scaler = GradScaler()
+    - [ ] SimpleTrainer
+      - [ ] super().__init__()
+      - [ ] model.train()
+  - [ ] self.checkpointer = Checkpointer()
+  - [ ] comm.is_main_process()
+    - [ ] return get_rank()
+  - [ ] self.register_hooks()
+  - [ ] self.build_hooks()
+    - [ ] hooks.IterationTimer()
+      - [ ] self._step_timer = Timer()
+    - [ ] hooks.LRScheduler()
+    - [ ] hooks.get_bn_modules()
+      - [ ] BN_MODULE_TYPES
+    - [ ] hooks.PreciseBN()
+      - [ ] get_bn_modules()
+    - [ ] self.build_train_loader()
+      - [ ] return build_reid_train_loader()
+    - [ ] hooks.LayerFreeze()
+- [ ] trainer.resume_or_load() -> fastreid.engine.defaults.DefaultTrainer.resume_or_load
+  - [ ] checkpoint = self.checkpointer.resume_or_load()
+    - [ ] self.has_checkpoint()
+    - [ ] self.get_checkpoint_file()
+    - [ ] self.load()
+  - [ ] self.checkpointer.has_checkpoint()
+    - [ ] return PathManager.exists()
+- [ ] trainer.train() -> fastreid.engine.train_loop.TrainerBase.train
+  - [ ] super().train()
+    - [ ] EventStorage()
+    - [ ] self.before_train()
+    - [ ] self.before_epoch()
+    - [ ] self.before_step()
+    - [ ] self.run_step()
+    - [ ] self.after_step()
+    - [ ] self.after_epoch()
+    - [ ] self.after_train()
+  - [ ] comm.is_main_process()
+    - [ ] return get_rank()
+  - [ ] return self._last_eval_results
+    - [ ] self._last_eval_results = self.test()
